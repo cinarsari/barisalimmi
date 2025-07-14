@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barışalım mı?</title>
+  <style>
+    /* ——— Layout & typography ——— */
+    *{box-sizing:border-box;margin:0;padding:0;font-family: "Segoe UI",sans-serif;}
+    body{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:2rem;
+      background:linear-gradient(135deg,#f6f8ff 0%,#e2e8ff 100%);
+    }
+
+    h1{
+      font-size:clamp(1.4rem,5vw,2rem);
+      text-align:center;
+      color:#333;
+      max-width:90vw;
+    }
+
+    /* ——— Buttons ——— */
+    .btn-row{
+      display:flex;
+      gap:1.5rem;
+    }
+    button{
+      padding:.75rem 2.5rem;
+      border:none;
+      border-radius:9999px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:600;
+      transition:transform .3s ease,background .3s ease;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+    #yes{
+      background:#10b981;
+      color:#fff;
+    }
+    #yes:hover{background:#0f9b6e;}
+    #no{
+      background:#ef4444;
+      color:#fff;
+    }
+    #no:hover{background:#d93737;}
+
+    /* ——— Growing animation for YES button ——— */
+    .grow{
+      transform:scale(var(--scale,1));
+    }
+
+    /* ——— Cat GIF ——— */
+    .cat{
+      width:200px;
+      max-width:60vw;
+      border-radius:16px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+
+    /* ——— Full‑screen YES (when scale≥6) ——— */
+    .full-cover{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:50;
+      background:#10b981;
+      color:#fff;
+      flex-direction:column;
+      gap:1rem;
+      font-size:clamp(1.8rem,5vw,3rem);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="prompt">Seni üzdüğüm için özür dilerim, barışalım mı?</h1>
+
+  <div class="btn-row">
+    <button id="yes" class="grow">Evet</button>
+    <button id="no">Hayır</button>
+  </div>
+
+  <img
+    class="cat"
+    src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
+    alt="Tatlı kedi GIF'i"
+  />
+
+  <script>
+    /* ——— Interaction logic ——— */
+    const promptEl = document.getElementById("prompt");
+    const yesBtn = document.getElementById("yes");
+    const noBtn = document.getElementById("no");
+
+    let noClicks = 0;
+    let yesScale = 1;
+
+    const confirmTexts = [
+      "Emin misin?",
+      "Gerçekten emin misin?",
+      "Bu tarz şeyler olacak…",
+      "Kararından dönebilirsin 🙂",
+      "Bak ‘Evet’ giderek cazipleşiyor!"
+    ];
+
+    // “Hayır” tıklandığında
+    noBtn.addEventListener("click", () => {
+      // Metni sırayla değiştir
+      promptEl.textContent =
+        confirmTexts[noClicks] || "Hâlâ ‘Hayır’ mı diyorsun?";
+      noClicks++;
+
+      // YES butonunu büyüt
+      yesScale += 0.5;
+      yesBtn.style.setProperty("--scale", yesScale.toString());
+
+      // Eğer yeterince büyüdüyse tam ekran kapla
+      if (yesScale >= 6) coverScreenWithYes();
+    });
+
+    // “Evet” tıklandığında
+    yesBtn.addEventListener("click", () => {
+      coverScreenWithYes(true);
+    });
+
+    function coverScreenWithYes(agreed = false) {
+      // Ekranı kaplayacak eleman oluştur
+      const overlay = document.createElement("div");
+      overlay.className = "full-cover";
+      overlay.innerHTML = agreed
+        ? "Yaşasın! 💖<br>Barıştık!"
+        : "Tamam, ben buradayım…";
+
+      document.body.appendChild(overlay);
+    }
+  </script>
+</body>
+</html>
